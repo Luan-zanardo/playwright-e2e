@@ -13,31 +13,40 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5.0.0
-    - name: Use Node.js 21
-      uses: actions/setup-node@v6.0.0
-      with:
-        node-version: 22
-        cache: 'npm'      
-    - run: npm install 
-    - run: npx playwright install --with-deps  
-    - run: npm run actions  
-      env:
-        ZEROSTEP_TOKEN: ${{ secrets.ZEROSTEP_TOKEN }}       
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'      
+
+      - name: Install dependencies
+        run: npm install 
+
+      - name: Install Playwright Browsers & OS Dependencies
+        run: npx playwright install --with-deps msedge
+
+      - name: Run Tests with Virtual Display
+        run: xvfb-run npm run actions  
+        env:
+          ZEROSTEP_TOKEN: ${{ secrets.ZEROSTEP_TOKEN }}       
 
   sonarcloud:
     name: Run SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.0
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0  
+
       - name: Setup Node.js environment
-        uses: actions/setup-node@v6.0.0
+        uses: actions/setup-node@v4
         with:
           node-version: 22 
+
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v6.0.0    
+        uses: SonarSource/sonarcloud-github-action@master    
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
