@@ -6,6 +6,12 @@ test.describe('Nike Brasil E2E', () => {
       waitUntil: 'domcontentloaded'
     });
 
+    // Se o WAF retornar Access Denied na primeira conexão fria, aguarda e recarrega
+    if ((await page.title()) === 'Access Denied') {
+      await page.waitForTimeout(2000);
+      await page.reload({ waitUntil: 'domcontentloaded' });
+    }
+
     // Aceita cookies caso o banner seja exibido
     const acceptCookies = page.getByRole('button', { name: /aceitar/i });
     if (await acceptCookies.isVisible({ timeout: 4000 }).catch(() => false)) {

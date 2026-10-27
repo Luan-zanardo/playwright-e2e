@@ -5,7 +5,7 @@ import { PlaywrightTestConfig } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   testDir: 'src/scenarios',
   timeout: 120000,
-  retries: 0,
+  retries: process.env.CI ? 2 : 0,
   use: {
     trace: 'on',
     channel: 'msedge',
